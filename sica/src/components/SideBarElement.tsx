@@ -1,4 +1,3 @@
-import React from 'react'
 import {chatState} from "../store/User"
 export default function SideBarElement({cht} : any) {
     const {setChat , chat} = chatState()
