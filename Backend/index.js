@@ -33,7 +33,7 @@ async function getUser(nam) {
     return user
   }
   else{
-    console.log("ntg niga/")
+   console.log("User not found")
     return []
   }
  
@@ -66,13 +66,25 @@ app.post("/", async (req,res) => {
 })
 
 app.post("/api/models" ,async (req,res) => {
-    const smt = req.body.data
+    const prompt = req.body.data
+    const chatId = req.body.chatId
+    const user = await User.find({name : req.body.UserName})
     const model = req.body.model
     const result = model === "Offline" ?
-         await local(smt)
+         await local(prompt)
         :
-         await generate(smt)
-    
+         await generate(prompt)
+    user[0].Chats[chatId-1].messages.push({
+      text: prompt,
+      model: model,
+      sender: "User"
+    })
+    user[0].Chats[chatId-1].messages.push({
+      text: result,
+      model: model,
+      sender: "Ai"
+    })
+    await user[0].save()
     res.send(result)
 })
 async function generate(prompt){
@@ -97,7 +109,7 @@ async function local(smt) {
     });
   
     const rawData = await res.text();
-    console.log(rawData);
+
   
     // Split by newline and filter out any empty lines
     const lines = rawData.split('\n').filter(line => line.trim());
@@ -122,30 +134,30 @@ async function local(smt) {
 
 
 // function to add chats to the user
-app.post("/getChats", async (req,res) => {
+app.post("/addChat", async (req,res) => {
   const name = req.body.UserName;
   const user = await User.find({name : name})
-  console.log(user)
-  const testchat = {
-    id: 2,
-    messages: [{
-      text: "Hello there, thanks for using sak app",
-      user : "User",
-      model: "User"
-    }]
-  }
-
-  // user[0].Chats.push(testchat)
-  // await user[0].save()
-  res.send(user[0].Chats)
+  const newChat = 
+    {
+      id: user[0].Chats.length + 1,
+      messages: [
+        {
+          text: "Hello how can i help you today? ",
+          model: "Default",
+          sender: "Ai"
+        }
+      ]
+    }
+  
+  user[0].Chats.push(newChat)
+  await user[0].save()
+  res.send({staus : "Chat Added", chat : newChat})
 })
 
 
 app.get("/getUserChats" , async (req,res) => {
   const name = req.query.user
   const user = await getUser(name)
-  console.log(user[0].Chats)
-  
   res.send(user[0].Chats)
 
 

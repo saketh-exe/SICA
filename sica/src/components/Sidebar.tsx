@@ -3,8 +3,15 @@ import {userState} from "../store/User"
 import axios from "axios";
 import SideBarElement from "./SideBarElement";
 export default function Sidebar() {
+  
+  
+  
   const {user} = userState();
-  const [chats,SetChats] = useState([])
+  const [chats,SetChats] = useState<{ text: string; sender: string; model: string }[]>([])
+
+
+
+  // for loading chats
   useEffect(() => {
 
     async function getChats(){
@@ -14,7 +21,6 @@ export default function Sidebar() {
         }
       })
       const data = res.data || []
-      console.log(data)
       SetChats(data)
     }
 
@@ -22,7 +28,14 @@ export default function Sidebar() {
 
   },[])
 
-  
+  async function addNewChat(){
+    const res = await axios.post("http://Localhost:3000/addChat",{
+      UserName : user
+    })
+    const data = res.data
+    const chat: { text: string; sender: string,model:string } =  data.chat
+    SetChats([...chats,chat])
+  }
 
   return (
    <div className='w-[20%] bg-amber-50 h-screen flex flex-col items-center'>
@@ -33,7 +46,7 @@ export default function Sidebar() {
 
       {/* action buttons  */}
       <div className="flex items-center justify-evenly w-full gap-2">
-    <button className="bg-black text-white w-1/2 p-2 m-2 rounded-md">
+    <button className="bg-black text-white w-1/2 p-2 m-2 rounded-md" onClick={() => addNewChat()} >
       New Chat
     </button>
     <input 

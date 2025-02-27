@@ -5,26 +5,39 @@ interface userInterface {
     setUser : (by:string) => void
     clearUser : () => void
 }
+type messageType = { text: string; sender: string,model:string }
 type chatType = {
-  chat: { text: string; user: string,model:string }[];
-  setChat: (chat: { text: string; user: string,model:string  }[]) => void;
+  id : number
+  chat: messageType[];
+  setChat: (chat: messageType[]) => void;
+  setId : (id:number) => void
+  addMessage : (message : messageType) => void
 };
 const chatState = create<chatType>()(
   (set) => ({
+    id : 0,
+    setId : (id) => {
+      set({id})
+    },
     chat: [],
     setChat: (chat) => {
-      console.log(chat);
       set({ chat });
-    }
-  })
-);
+    },
+    addMessage : (message) => {
+      set((state) => {
+        return {
+          chat : [...state.chat, message]
+        }
+      })
+    }})
+  )
+
  
 const userState = create<userInterface>()(
     persist(
       (set) => ({
         user: "",
         setUser: (user) => {
-          console.log(user);
           set({ user });
         },
         clearUser :  () => {
