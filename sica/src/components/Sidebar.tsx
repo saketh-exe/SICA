@@ -28,6 +28,8 @@ export default function Sidebar() {
 
   },[])
 
+
+  // need to be fixed : new chat isn't upadting global state 
   async function addNewChat(){
     const res = await axios.post("http://Localhost:3000/addChat",{
       UserName : user
@@ -60,7 +62,7 @@ export default function Sidebar() {
       <div className="bg-white w-full overflow-y-auto">
           {chats.map((chat : any) => {
             return (
-              <SideBarElement key={chat.id} cht={chat}/>
+              <SideBarElement key={chat.id} cht={chat} id= {chat.id}/>
             )
           })}
       </div>

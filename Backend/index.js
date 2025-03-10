@@ -10,10 +10,12 @@ const app = express()
 env.config() // this loads env variables 
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API)
-const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-
+const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash",
+  systemInstruction : "Your are a Development buddy who helps at all devleopment stages and api knowledge",
+ });
+;
 app.use(cors())
-app.use(express.json())
+app.use(express.json()) 
 
 const connectDB  = async () => {
   try{
@@ -73,7 +75,7 @@ app.post("/api/models" ,async (req,res) => {
     const result = model === "Offline" ?
          await local(prompt)
         :
-         await generate(prompt)
+         await hisgen(prompt,user[0].Chats[chatId-1])
     user[0].Chats[chatId-1].messages.push({
       text: prompt,
       model: model,
@@ -88,15 +90,56 @@ app.post("/api/models" ,async (req,res) => {
     res.send(result)
 })
 async function generate(prompt){
+  console.log("Sending the message")
+const context = 'Latest News : Washington: US President Donald Trump on Thursday delayed some tariffs targeting Canada and Mexico -- leading Ottawa to halt an upcoming wave of countermeasures -- in moves that bring reprieve to companies and consumers after blowback on financial markets. Stock markets tumbled after Trump\'s duties of up to 25 percent took effect Tuesday, as economists warned that blanket levies could weigh on US growth and raise inflation.';
     try{
-        res = await model.generateContent(prompt)
+        res = await model.generateContent(prompt + context)
         return res.response.text();
-
     }
     catch{
         return "Error Please Check your internet connection "
     }
 }
+
+async function hisgen(prompt , prevChat){
+
+    let history = generateHistory(prevChat);
+ 
+    let chat = model.startChat({history})
+  
+  let result = await chat.sendMessage(prompt);
+  return result.response.text();
+}
+
+function generateHistory(chat){
+  let history = [{
+    role : "user",
+    parts : [{text : " "}]
+  }];
+
+  for(let i = 0 ; i< chat.messages.length; i++){
+    let message = chat.messages[i];
+    let role = message.sender === "User" ? "user" : "model";
+
+    if(role === "user"){
+      history.push({
+        role : role,
+        parts : [{text : message.text}]
+      })
+    }
+    else{
+      history.push({
+        role : role,
+        parts : [{text : message.text}]
+      })
+    }
+
+  }
+ 
+  return history;
+}
+
+
 
 async function local(smt) {
     let res = await fetch("http://localhost:11434/api/generate", {
