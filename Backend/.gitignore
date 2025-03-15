@@ -20,3 +20,5 @@ pids/
 *.pid
 *.seed
 *.pid.lock
+
+controllers/Document.js

@@ -2,6 +2,7 @@ import { useState , useEffect, useRef} from "react";
 import Usertext from "../components/Usertext";
 import axios from "axios";
 import {chatState , userState} from "../store/User";
+import ReactLoading from 'react-loading';
 interface Message {
   text: string;
   sender : string;
@@ -17,7 +18,7 @@ export default function ChatBox() {
   const addMessage = chatState((state) => state.addMessage);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [id,setId] = useState(0);
-  
+  const [loading , setLoading ] = useState(false)
   
   useEffect(()=>{
     setMessages(chat)
@@ -32,7 +33,7 @@ export default function ChatBox() {
 
   // for sending message to backend 
   function sendRes() {
-   
+   setLoading(true)
     if (!prompt.trim()) return; // Prevent empty messages
     const newMessage : Message = {
       text : prompt,
@@ -57,6 +58,7 @@ export default function ChatBox() {
           model : model
         }
         addMessage(newMessage)
+        setLoading(false)
       }
       
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -78,6 +80,7 @@ export default function ChatBox() {
         {messages.map((m, index) => (
           <Usertext key={index} message={m.text} user = {m.sender}/>
         ))}
+        {loading && <ReactLoading width={60} height={10} type="cubes"/>}
         <div ref={messagesEndRef}></div>
       </div>
       <div className="bg-amber-950 h-[10%] flex justify-center items-center gap-3 p-2">

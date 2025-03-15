@@ -40,7 +40,7 @@ export default function Sidebar() {
   }
 
   return (
-   <div className='w-[20%] bg-amber-50 h-screen flex flex-col items-center'>
+   <div className='w-[20%] bg-gray-700 h-screen flex flex-col items-center'>
       {/* Profile section  */}
       <div className="bg-white w-full text-2xl text-center p-2 font-bold">
       {user}
@@ -52,14 +52,14 @@ export default function Sidebar() {
       New Chat
     </button>
     <input 
-    className="bg-gray-700 text-white w-1/2 p-2 m-2 rounded-md"
+    className="bg-gray-700 text-white border-2 border-white w-1/2 p-2 m-2 rounded-md"
     type = "text"
     placeholder="Search"
     />
       </div>
 
       {/* Chat list  */}
-      <div className="bg-white w-full overflow-y-auto">
+      <div className=" w-full overflow-y-auto">
           {chats.map((chat : any) => {
             return (
               <SideBarElement key={chat.id} cht={chat} id= {chat.id}/>
