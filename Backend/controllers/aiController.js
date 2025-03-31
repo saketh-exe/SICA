@@ -1,104 +1,95 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
-const axios = require("axios");  // Replacing node-fetch with axios
 const { generateHistory } = require("../utils/historyUtils");
 const User = require("../models/User");
-const Docu = require("../models/document")
+const Docu = require("../models/document");
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+const model = genAI.getGenerativeModel({ model: "gemini-2.5-pro-exp-03-25" });
+const emb = genAI.getGenerativeModel({ model: "gemini-embedding-exp-03-07" });
 
-// Generate response using online model
-async function generate(prompt) {
-  try {
-    const response = await model.generateContent(prompt);
-    return response.response.text();
-  } catch {
-    return "Error: Please check your internet connection.";
-  }
-}
-async function genEmb(s){
 
-  const emb = genAI.getGenerativeModel({model : "gemini-embedding-exp-03-07"})
-  const res = await emb.embedContent(s)
+async function genEmb(s) {
   
-  return res.embedding.values
-
-}
-function cosineSim(A,B){
-  const dotPoduct = A.reduce((sum,a,idx) => sum + a* B[idx] , 0);
-  const NormA = Math.sqrt(A.reduce((sum,a)=> sum + a*a,0))
-  const NormB = Math.sqrt(B.reduce((sum,b)=> sum + b*b,0))
-  return dotPoduct/(NormA*NormB);
-  }
-async function getContext(prompt){
-  const docu = await Docu.find()
-    const query = await genEmb(prompt)
     
-    const simlarityVec = docu.map((doc) => {
-        const sim = cosineSim(doc['embedding'],query)
+    
+  const res = await emb.embedContent(s);
+  if (res.error) {
+    console.error("Error generating embedding:", res.error);
+    throw new Error("Embedding generation failed");
+  }
 
-        return {sim, doc}
-    })
-    simlarityVec.sort((a, b) => b.sim - a.sim);
-    console.log(simlarityVec[0].sim)
-    return simlarityVec[0].doc.text
-
+  return res.embedding.values;
 }
+
+// Optimized Cosine Similarity Calculation
+function cosineSim(A, B) {
+  let dotProduct = 0,
+    normA = 0,
+    normB = 0;
+  for (let i = 0; i < A.length; i++) {
+    dotProduct += A[i] * B[i];
+    normA += A[i] * A[i];
+    normB += B[i] * B[i];
+  }
+  return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
+}
+
+// Optimized Context Retrieval
+async function getContext(prompt) {
+  const [docu, query] = await Promise.all([Docu.find().lean(), genEmb(prompt)]);
+
+  const similarityVec = docu.map((doc) => ({
+    sim: cosineSim(doc.embedding, query),
+    doc,
+  }));
+
+  function partition(left, right, pivotIndex) {
+    let pivotValue = similarityVec[pivotIndex].sim;
+    [similarityVec[pivotIndex], similarityVec[right]] = [similarityVec[right], similarityVec[pivotIndex]];
+    let storeIndex = left;
+    for (let i = left; i < right; i++) {
+      if (similarityVec[i].sim > pivotValue) {
+        [similarityVec[storeIndex], similarityVec[i]] = [similarityVec[i], similarityVec[storeIndex]];
+        storeIndex++;
+      }
+    }
+    [similarityVec[right], similarityVec[storeIndex]] = [similarityVec[storeIndex], similarityVec[right]];
+    return storeIndex;
+  }
+
+  function quickSelect(left, right, k) {
+    while (left < right) {
+      let pivotIndex = left + Math.floor(Math.random() * (right - left + 1));
+      pivotIndex = partition(left, right, pivotIndex);
+      if (k === pivotIndex) return;
+      k < pivotIndex ? (right = pivotIndex - 1) : (left = pivotIndex + 1);
+    }
+  }
+
+  quickSelect(0, similarityVec.length - 1, 1);
+  return [similarityVec[0].doc.text, similarityVec[1].doc.text];
+}
+
 // Generate response considering chat history
 async function hisgen(prompt, prevChat) {
-
-  const context = await getContext(prompt)
-  const history =  generateHistory(prevChat);
+  const [context, history] = await Promise.all([getContext(prompt), generateHistory(prevChat)]);
   const chat = model.startChat({ history });
-  
-  const result = await chat.sendMessage(`Using only the following context ,if context is not related to question then ignore the context , answer the question: ${context} Question:`+prompt);
+  const contextStr = context.join(",");
+  const result = await chat.sendMessage(`Using only the following context and previous chat history, if context is not related to question then ignore the context, answer the question: ${contextStr} Question: ` + prompt);
   return result.response.text();
-}
-
-// Generate response using local model (Ollama)
-async function local(smt) {
-  try {
-    const res = await axios.post("http://localhost:11434/api/generate", {
-      model: "mistral:latest",
-      prompt: smt,
-    });
-
-    const rawData = res.data; // Axios automatically parses JSON
-
-    let fullResponse = "";
-    if (Array.isArray(rawData)) {
-      rawData.forEach((chunk) => {
-        fullResponse += chunk.response;
-      });
-    } else {
-      fullResponse = rawData.response;
-    }
-
-    return fullResponse;
-  } catch (error) {
-    console.error("Error fetching response from local model:", error.message);
-    return "Error fetching response from local model.";
-  }
 }
 
 // AI interaction
 const generateResponse = async (req, res) => {
-  const { data: prompt, chatId, UserName, model } = req.body;
+  const { data: prompt, chatId, UserName } = req.body;
   const user = await User.findOne({ name: UserName });
 
-  const response =
-    model === "Offline"
-      ? await local(prompt)
-      : await hisgen(prompt, user.Chats[chatId - 1]);
+  const response = await hisgen(prompt, user.Chats[chatId - 1]);
 
-  user.Chats[chatId - 1].messages.push({ text: prompt, model, sender: "User" });
-  user.Chats[chatId - 1].messages.push({ text: response, model, sender: "Ai" });
+  user.Chats[chatId - 1].messages.push({ text: prompt, sender: "User" ,model : "Online"});
+  user.Chats[chatId - 1].messages.push({ text: response, sender: "Ai" , model : "Online"});
 
   await user.save();
   res.send(response);
 };
-
-
-
-
 
 module.exports = { generateResponse };

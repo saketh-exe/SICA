@@ -1,3 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Boldonse&family=Pixelify+Sans:wght@400..700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Sixtyfour+Convergence&display=swap');
 @import "tailwindcss";
 @plugin 'tailwind-scrollbar';
+
+
+.boldonse-regular {
+   
+        font-family: "Pixelify Sans", sans-serif;
+        font-optical-sizing: auto;
+        font-weight: 500;
+        font-style: normal;
+        font-size: 300px;
+      
+  }
+
+  

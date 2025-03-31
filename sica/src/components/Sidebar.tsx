@@ -2,6 +2,7 @@ import {useState,useEffect} from "react"
 import {userState} from "../store/User"
 import axios from "axios";
 import SideBarElement from "./SideBarElement";
+import img from "../assets/image.png"
 export default function Sidebar() {
   
   
@@ -40,22 +41,18 @@ export default function Sidebar() {
   }
 
   return (
-   <div className='w-[20%] bg-gray-700 h-screen flex flex-col items-center'>
+   <div className='w-[15%] min-w-[125px] bg-gray-700 h-screen flex flex-col items-center'>
       {/* Profile section  */}
-      <div className="bg-white w-full text-2xl text-center p-2 font-bold">
+      <div className="bg-white w-full text-2xl p-2 flex justify-evenly items-center font-bold rounded-b-lg">
+      <img src={img}  className="w-18 h-12"/>
       {user}
       </div>
 
       {/* action buttons  */}
       <div className="flex items-center justify-evenly w-full gap-2">
-    <button className="bg-black text-white w-1/2 p-2 m-2 rounded-md" onClick={() => addNewChat()} >
-      New Chat
+    <button className="bg-black text-white w-3/4 p-2 mt-4 rounded-md hover:bg-amber-50 hover:text-black transition-all cursor-crosshair font-bold" onClick={() => addNewChat()} >
+     ➕ New Chat
     </button>
-    <input 
-    className="bg-gray-700 text-white border-2 border-white w-1/2 p-2 m-2 rounded-md"
-    type = "text"
-    placeholder="Search"
-    />
       </div>
 
       {/* Chat list  */}

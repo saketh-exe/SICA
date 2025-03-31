@@ -99,13 +99,14 @@ export default function Login() {
 
   
     return (
-    <div className="w-full h-screen text-gray-100 flex justify-center items-center flex-col gap-4 bg-gray-900">
-      <h1 className="smt text-6xl font-mono font-thin">
+    <div className=" text-gray-100 flex justify-center items-center flex-col gap-4 bg-gray-900/0 relative z-20">
+      <h1 className="smt text-6xl font-mono font-thin boldonse-regular">
         SICA
       </h1>
       <TypewriterEffectSmooth words={words}/>
-      <TypewriterEffectSmooth words={words2}/>
-      <div className="bg-gray-100/50 text-black p-8 rounded-lg flex flex-col gap-4 backdrop:blur-2xl">
+      {<TypewriterEffectSmooth words={words2}/>
+      }
+      <div className="bg-gray-100/70 text-black p-8 rounded-lg flex flex-col gap-4 backdrop:blur-2xl">
 
   
       <h3 className="font-bold text-3xl">Login/Signup:</h3>

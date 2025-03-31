@@ -75,7 +75,7 @@ export default function ChatBox() {
   }
       
       return (
-        <div className="w-[80%] bg-gray-900 h-screen">
+        <div className="w-[85%] bg-gray-900 h-screen">
       <div className="bg-black/25 h-[90%] overflow-y-auto p-4 scrollbar-none">
         {messages.map((m, index) => (
           <Usertext key={index} message={m.text} user = {m.sender}/>
@@ -83,21 +83,16 @@ export default function ChatBox() {
         {loading && <ReactLoading width={60} height={10} type="cubes"/>}
         <div ref={messagesEndRef}></div>
       </div>
-      <div className="bg-amber-950 h-[10%] flex justify-center items-center gap-3 p-2">
-        
-        <label className="text-white" htmlFor="Online">Online :</label>
-        <input type="radio" name="model" id="Online" checked = {model === "Online"} onClick={() => setModel("Online")}/>
-        <label className="text-white" htmlFor="Offline">Offline :</label>
-        <input type="radio" name="model" id="Offline" checked = {model === "Offline"}  onClick={() => setModel("Offline")}/>
+      <div className="bg-transparent h-[10%] flex justify-center items-center gap-3 p-2">
         <input
           type="text"
           onChange={handleChange}
           onKeyDown={handelClick}
           value={prompt}
-          placeholder="Enter text"
-          className="bg-gray-500 w-[80%] text-2xl rounded-2xl p-4 border-black border-2"
+          placeholder="Enter your query regarding the college"
+          className="bg-gray-700 w-[90%] text-2xl rounded-2xl p-4 border-black border-1 text-white active:outline-none focus:outline-none"
           />
-        <button className="bg-white text-2xl p-4 rounded-xl "  onClick={sendRes} >
+        <button className="bg-white text-2xl p-4 rounded-xl hover:bg-green-200 transition-all cursor-pointer"  onClick={sendRes} >
           Send
         </button>
        
