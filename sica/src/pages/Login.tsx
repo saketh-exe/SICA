@@ -46,6 +46,11 @@ export default function Login() {
 
     async function login(Name:String , Password : String) : Promise<boolean> {
       try{
+        if (!Name || !Password) {
+          setLoading(false)
+          return false
+          
+        }
         const res =  await axios.post("http://localhost:3000/",{UserName : Name , Password : Password})
         const data = res.data
         if(data){
@@ -106,23 +111,23 @@ export default function Login() {
       <TypewriterEffectSmooth words={words}/>
       {<TypewriterEffectSmooth words={words2}/>
       }
-      <div className="bg-gray-100/70 text-black p-8 rounded-lg flex flex-col gap-4 backdrop:blur-2xl">
+      <div className="bg-gray-100/70 text-black p-8 rounded-lg flex flex-col items-center gap-4 backdrop:blur-2xl">
 
   
-      <h3 className="font-bold text-3xl">Login/Signup:</h3>
+      <h3 className="font-bold text-3xl ">Login/Signup:</h3>
         <div >
-      <label className="text-xl" htmlFor="UserName" >Username :</label><br/>
-      <input  onChange={(e) => handleChange(e)}  className="border-2 p-3 pl-4 mt-2 font-bold font-sans rounded-lg text-3xl" type="text" id="UserName" value={userName} placeholder="Enter your Username">
+      {/* <label className="text-xl" htmlFor="UserName" >Username :</label><br/> */}
+      <input  onChange={(e) => handleChange(e)}  className="border-2 p-3 pl-4 mt-2 font-bold font-sans rounded-lg text-3xl" type="text" id="UserName" value={userName} placeholder="Username">
       </input>
         </div>
         <div>
-      <label className="mr-1 text-xl" htmlFor="Password">Password :</label><br/>
-      <input onChange={(e) => handleChange(e)} className="border-2 p-3 pl-4 rounded-lg text-3xl mt-2 font-bold font-sans" type="password" id="Password" value={password} placeholder="Enter your Password">
+      {/* <label className="mr-1 text-xl" htmlFor="Password">Password :</label><br/> */}
+      <input onChange={(e) => handleChange(e)} className="border-2 p-3 pl-4 rounded-lg text-3xl my-2 font-bold font-sans" type="password" id="Password" value={password} placeholder="Password">
       </input>
       {wrong && <p className="text-red-700">Please check Username or Password</p>}
         </div>
-        {!loading && <button className="bg-gray-50 text-black p-2 text-2xl rounded-lg hover:bg-black hover:text-white cursor-pointer transition-all duration-300" onClick={handelSubmit}>
-            Login
+        {!loading && <button className="bg-gray-50 text-black p-4 text-2xl rounded-lg hover:bg-black hover:text-white cursor-pointer transition-all duration-300" onClick={handelSubmit}>
+          Login
         </button> 
       }
       { loading && <ReactLoading type={"cylon"} color={"white"} height={50} width={50} />}

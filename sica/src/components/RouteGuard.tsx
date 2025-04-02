@@ -9,7 +9,6 @@ export default function RouteGuard({ children }: { children: React.ReactNode }) 
     if (user) {
         return <>{children}</>  // Properly return the child component
     } else {
-        alert("nigga login first")
         return <Navigate to="/" /> // Redirect to login if user is not authenticated
     }
 }

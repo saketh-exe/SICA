@@ -69,12 +69,14 @@ async function getContext(prompt) {
   return [similarityVec[0].doc.text, similarityVec[1].doc.text];
 }
 
-// Generate response considering chat history
+// Generate response considering chat history and context
 async function hisgen(prompt, prevChat) {
   const [context, history] = await Promise.all([getContext(prompt), generateHistory(prevChat)]);
   const chat = model.startChat({ history });
   const contextStr = context.join(",");
-  const result = await chat.sendMessage(`Using only the following context and previous chat history, if context is not related to question then ignore the context, answer the question: ${contextStr} Question: ` + prompt);
+  const result = await chat.sendMessage(
+    "" + prompt + "\n\nContext: " + contextStr + "\n\nHistory: " + history,
+  );
   return result.response.text();
 }
 

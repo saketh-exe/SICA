@@ -49,7 +49,7 @@ export default function Usertext({ message, user }: UsertextProps) {
   return (
     <>
       {user === 'User' ? (
-        <div className="bg-gray-100 text-sky-900 text-left w-fit max-w-[70%] ml-auto p-4 rounded-2xl rounded-br-none mb-1 border-4 border-amber-700">
+        <div className="bg-gray-100 text-sky-900 text-left w-fit max-w-[70%] ml-auto p-4 rounded-2xl rounded-br-none my-6 border-4 border-amber-700">
           {message}
         </div>
       ) : (

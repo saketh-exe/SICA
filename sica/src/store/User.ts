@@ -12,6 +12,7 @@ type chatType = {
   setChat: (chat: messageType[]) => void;
   setId : (id:number) => void
   addMessage : (message : messageType) => void
+  clearChat : () => void
 };
 const chatState = create<chatType>()(
   (set) => ({
@@ -23,13 +24,18 @@ const chatState = create<chatType>()(
     setChat: (chat) => {
       set({ chat });
     },
+    clearChat : () => {
+      set({chat : []})
+    }
+    ,
     addMessage : (message) => {
       set((state) => {
         return {
           chat : [...state.chat, message]
         }
       })
-    }})
+    }}),
+    
   )
 
  

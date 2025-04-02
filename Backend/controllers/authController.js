@@ -11,10 +11,10 @@ const authenticateUser = async (req, res) => {
   const { UserName, Password } = req.body;
   const user = await getUser(UserName);
 
-  if (!user.length) {
+  if (!user.length || !Password.length) {
     await User.create({ name: UserName, Password, Chats: [] });
     return res.send(true);
-  }
+  } 
 
   return res.send(user[0].Password === Password);
 };

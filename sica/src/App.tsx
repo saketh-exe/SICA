@@ -1,6 +1,5 @@
 import './App.css'
 import Home from './pages/Home'
-import Login from './pages/Login'
 import { BackgroundBoxesDemo } from './pages/BackgroundBoxesDemo'
 import { BrowserRouter as Router,Route,Routes } from 'react-router-dom'
 import RouteGuard from './components/RouteGuard'

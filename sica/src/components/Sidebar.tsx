@@ -1,15 +1,16 @@
 import {useState,useEffect} from "react"
-import {userState} from "../store/User"
+import {userState , chatState} from "../store/User"
 import axios from "axios";
 import SideBarElement from "./SideBarElement";
-import img from "../assets/image.png"
-export default function Sidebar() {
+import { useNavigate } from "react-router-dom"
+export default function Sidebar({opened} : {opened : boolean}) {
   
   
   
-  const {user} = userState();
+  const {user , clearUser} = userState();
   const [chats,SetChats] = useState<{ text: string; sender: string; model: string }[]>([])
-
+  const {clearChat , setChat} = chatState();
+  const Nav = useNavigate()
 
 
   // for loading chats
@@ -23,6 +24,8 @@ export default function Sidebar() {
       })
       const data = res.data || []
       SetChats(data)
+      setChat(data[0]?.messages || [])
+      chatState.setState({id : data[0]?.id || 0})
     }
 
     getChats()
@@ -39,13 +42,28 @@ export default function Sidebar() {
     const chat: { text: string; sender: string,model:string } =  data.chat
     SetChats([...chats,chat])
   }
+  let sty = " ";
+  if (opened) {
+    sty = "w-[15%] min-w-[125px] bg-gray-700 h-screen flex flex-col items-center"
+    
+  }
+  else{
+    sty = "hidden"
+  }
 
   return (
-   <div className='w-[15%] min-w-[125px] bg-gray-700 h-screen flex flex-col items-center'>
+   <div className={sty}>
       {/* Profile section  */}
-      <div className="bg-white w-full text-2xl p-2 flex justify-evenly items-center font-bold rounded-b-lg">
-      <img src={img}  className="w-18 h-12"/>
-      {user}
+      <div className="bg-white w-full text-2xl p-2 flex justify-evenly items-center font-bold rounded-b-lg flex-wrap">
+            {user}
+            <button className="bg-red-500 text-white p-2 rounded-md hover:bg-red-700 transition-all cursor-pointer font-bold text-sm " onClick={() => {
+              clearUser();
+              clearChat();
+              SetChats([])
+              Nav("/")
+              }}>
+              Logout
+            </button>
       </div>
 
       {/* action buttons  */}

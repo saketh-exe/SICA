@@ -13,7 +13,7 @@ export default function ChatBox() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [prompt, setPrompt] = useState("");
   const {user} = userState();
-  const [model , setModel] = useState("Online")
+  const model = "Online"
   const chat = chatState((state) => state.chat)
   const addMessage = chatState((state) => state.addMessage);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -75,7 +75,7 @@ export default function ChatBox() {
   }
       
       return (
-        <div className="w-[85%] bg-gray-900 h-screen">
+        <div className="w-[100%] bg-gray-900 h-screen">
       <div className="bg-black/25 h-[90%] overflow-y-auto p-4 scrollbar-none">
         {messages.map((m, index) => (
           <Usertext key={index} message={m.text} user = {m.sender}/>
