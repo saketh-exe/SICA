@@ -13,12 +13,17 @@ Sica is an intelligent chatbot powered by the **Gemini API** and **RAG (Retrieva
 - 🌐 **Full-Stack Architecture:** Robust backend using Node.js, Express.js, and MongoDB.
 
 ---
+### Project Screenshots 
+![Screenshot 2025-04-22 171842](https://github.com/user-attachments/assets/2b4a612b-6c72-4081-a0a2-e9bfb0c14941)
+![Screenshot 2025-04-22 171908](https://github.com/user-attachments/assets/54345817-46ca-4685-9fa1-9c33f6c0c808)
+![Screenshot 2025-04-22 171922](https://github.com/user-attachments/assets/f398718e-3be2-477c-bbb6-55820bf3280d)
 
 ## 🛠️ Tech Stack
 
 ### Frontend
 - **React** with **TypeScript**
 - **Tailwind CSS** for responsive design
+- **Aceternity UI Components**
 
 ### Backend
 - **Node.js** + **Express.js**
