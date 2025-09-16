@@ -6,7 +6,22 @@ const connectDB = require("./config/db");
 env.config();
 
 const app = express();
-app.use(cors());
+
+// CORS configuration for production
+const corsOptions = {
+  origin: [
+    "http://localhost:5173", // for local development
+    "http://localhost:3000", // for local development
+    "https://charming-wisp-0c5546.netlify.app" // your deployed frontend
+  ],
+  credentials: true, // if you need to send cookies or auth headers
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+};
+
+app.use(cors({
+  origin: true
+}));
 app.use(express.json());
 
 connectDB();
@@ -21,6 +36,7 @@ app.use("/", authRoutes);
 app.use("/", chatRoutes);
 app.use("/", aiRoutes);
 
-app.listen(3000, () => {
-  console.log("Server is running at port 3000");
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`Server is running at port ${port}`);
 });

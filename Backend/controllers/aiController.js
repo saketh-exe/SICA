@@ -3,7 +3,7 @@ const { generateHistory } = require("../utils/historyUtils");
 const User = require("../models/User");
 const Docu = require("../models/document");
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API);
-const model = genAI.getGenerativeModel({ model: "gemini-2.5-pro-exp-03-25" });
+const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
 const emb = genAI.getGenerativeModel({ model: "gemini-embedding-exp-03-07" });
 
 
