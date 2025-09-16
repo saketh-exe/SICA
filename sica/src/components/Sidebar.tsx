@@ -3,6 +3,7 @@ import {userState , chatState} from "../store/User"
 import axios from "axios";
 import SideBarElement from "./SideBarElement";
 import { useNavigate } from "react-router-dom"
+import config from "../config/env";
 export default function Sidebar({opened} : {opened : boolean}) {
   
   
@@ -17,7 +18,7 @@ export default function Sidebar({opened} : {opened : boolean}) {
   useEffect(() => {
 
     async function getChats(){
-      const res = await axios.get("http://Localhost:3000/getUserChats",{
+      const res = await axios.get(`${config.backendUrl}/getUserChats`,{
         params : {
           user : user
         }
@@ -35,7 +36,7 @@ export default function Sidebar({opened} : {opened : boolean}) {
 
   // need to be fixed : new chat isn't upadting global state 
   async function addNewChat(){
-    const res = await axios.post("http://Localhost:3000/addChat",{
+    const res = await axios.post(`${config.backendUrl}/addChat`,{
       UserName : user
     })
     const data = res.data

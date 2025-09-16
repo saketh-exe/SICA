@@ -2,6 +2,7 @@ import {chatState , userState} from "../store/User"
 import { useState } from "react";
 import ReactLoading from 'react-loading';
 import axios from "axios";
+import config from "../config/env";
 export default function SideBarElement({cht} : any) {
     const {setChat , setId,id} = chatState()
     const {user} = userState()
@@ -21,7 +22,7 @@ let [loading , setLoading] = useState(false)
                 <button className="bg-red-500 text-white p-1 rounded-sm cursor-pointer hover:bg-amber-900" onClick = {async () => {
                     setLoading(true)
                     
-                    let res = await axios.delete("http://Localhost:3000/deleteChat",{ 
+                    let res = await axios.delete(`${config.backendUrl}/deleteChat`,{ 
                       data: {
                       userName : user,
                       chatId : cht.id

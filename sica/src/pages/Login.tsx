@@ -4,6 +4,7 @@ import {userState} from "../store/User"
 import { useNavigate } from "react-router-dom"
 import ReactLoading from 'react-loading';
 import { TypewriterEffectSmooth } from "@/components/ui/typewriter-effect";
+import config from "../config/env";
 export default function Login() {
     const Navigator = useNavigate()
     let [userName,setUserName] = useState("")
@@ -51,7 +52,7 @@ export default function Login() {
           return false
           
         }
-        const res =  await axios.post("http://localhost:3000/",{UserName : Name , Password : Password})
+        const res =  await axios.post(`${config.backendUrl}/`,{UserName : Name , Password : Password})
         const data = res.data
         if(data){
           return true

@@ -3,6 +3,7 @@ import Usertext from "../components/Usertext";
 import axios from "axios";
 import {chatState , userState} from "../store/User";
 import ReactLoading from 'react-loading';
+import config from "../config/env";
 interface Message {
   text: string;
   sender : string;
@@ -45,7 +46,7 @@ export default function ChatBox() {
     setPrompt("");
   }
   async function getRes(mes : string, model :string) {
-        const res = await axios.post("http://localhost:3000/api/models",
+        const res = await axios.post(`${config.backendUrl}/api/models`,
         {data : mes , 
          model : model,
          chatId : id,
