@@ -12,7 +12,7 @@ const corsOptions = {
   origin: [
     "http://localhost:5173", // for local development
     "http://localhost:3000", // for local development
-    "https://charming-wisp-0c5546.netlify.app" // your deployed frontend
+    "https://sica-chat.netlify.app/" // your deployed frontend
   ],
   credentials: true, // if you need to send cookies or auth headers
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
